@@ -35,6 +35,8 @@ export class App extends Component {
       this.setState(({ contacts }) => ({
         contacts: [...contacts, contact],
       }));
+
+      Notify.success('Contact successfully added');
     }
   };
 
@@ -55,7 +57,22 @@ export class App extends Component {
     this.setState(prevState => ({
       contacts: prevState.contacts.filter(contact => contact.id !== id),
     }));
+    Notify.info('Сontact deleted successfully');
   };
+
+  componentDidMount() {
+    const contacts = localStorage.getItem('contacts');
+    const parseContacts = JSON.parse(contacts);
+    if (parseContacts) {
+      this.setState({ contacts: parseContacts });
+    }
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    if (this.state.contacts !== prevState.contacts) {
+      localStorage.setItem('contacts', JSON.stringify(this.state.contacts));
+    }
+  }
 
   render() {
     const visibleContacts = this.getVisibleContacts();
